@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data;
 using System.IO;
+using System.Text;
 using ConwayBusinessLogic;
 
 namespace ConwayConsolePresentation
@@ -8,6 +10,7 @@ namespace ConwayConsolePresentation
     {
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine("----------========== Conway's Game of Life ==========----------");
             string colsString, rowsString, cellsString;
             //do
@@ -29,6 +32,13 @@ namespace ConwayConsolePresentation
             if (Int32.TryParse(colsString, out int cols) && Int32.TryParse(rowsString, out int rows) && Int32.TryParse(cellsString, out int cells))
             {
                 PlayArea playArea = new PlayArea(cols, rows, cells);
+                bool shouldContinue = true;
+                while (shouldContinue)
+                {
+                    playArea.DrawMap();
+                    var keyInfo = Console.ReadKey();
+                    if (keyInfo.KeyChar == 'x') shouldContinue = false;
+                }
             }
             else
             {
