@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using ConwayBusinessLogic;
@@ -13,49 +14,35 @@ namespace ConwayConsolePresentation
             Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine("----------========== Conway's Game of Life ==========----------");
             string colsString, rowsString, cellsString;
-            //do
-            //{
             Console.Write("Sorok száma: ");
             colsString = Console.ReadLine();
-            //} while (!Int32.TryParse(colsString, out int cols));
-            //do
-            //{
             Console.Write("Oszlopok száma: ");
             rowsString = Console.ReadLine();
-            //} while (!Int32.TryParse(rowsString, out int rows));
-            //do
-            //{
             Console.Write("Elemek száma: ");
             cellsString = Console.ReadLine();
-            //} while (!Int32.TryParse(elementsString, out int elements));
 
             if (Int32.TryParse(colsString, out int cols) && Int32.TryParse(rowsString, out int rows) && Int32.TryParse(cellsString, out int cells))
             {
                 PlayArea playArea = new PlayArea(cols, rows, cells);
                 bool shouldContinue = true;
+                playArea.DrawMap();
+                int gen = 0;
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
                 while (shouldContinue)
                 {
+                    playArea.ApplyRules();
                     playArea.DrawMap();
-                    var keyInfo = Console.ReadKey();
-                    if (keyInfo.KeyChar == 'x') shouldContinue = false;
+                    if (playArea.isAllFalse()) break;
+                    gen++;
+                    //var keyInfo = Console.ReadKey();
+                    //if (keyInfo.KeyChar == 'x') shouldContinue = false;
                 }
+                sw.Stop();
+                Console.WriteLine();
+                Console.WriteLine($"Sim endend({(shouldContinue ? "Population died" : "")}). Elapsed time: {sw.Elapsed.TotalSeconds}\tGeneration count: {gen}");
             }
-            else
-            {
-                Console.WriteLine("Valami nem jó");
-            }
-
-            //try //lassú az Exception obj. miatt
-            //{
-            //    var cols = Convert.ToInt32(colsString);
-            //    var rows = Convert.ToInt32(rowsString);
-            //    var elements = Convert.ToInt32(elementsString);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine("Nem megfelelő értékek!");
-            //    return;
-            //}
+            else Console.WriteLine("Valami nem jó");
 
             Console.WriteLine("Done.");
             Console.ReadKey();

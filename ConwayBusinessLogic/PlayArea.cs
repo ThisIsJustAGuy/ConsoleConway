@@ -23,9 +23,9 @@ namespace ConwayBusinessLogic
 
         private void Clear()
         {
-            for (int i = 0; i < Cols - 1; i++)
+            for (int i = 0; i < Cols; i++)
             {
-                for (int j = 0; j < Rows - 1; j++)
+                for (int j = 0; j < Rows; j++)
                 {
                     Map[i, j] = false;
                 }
@@ -39,7 +39,8 @@ namespace ConwayBusinessLogic
             var elements = Enumerable.Range(0, Cols * Rows).ToHashSet();
             for (int i = 0; i < Cells; i++)
             {
-                int item = rnd.Next(0, elements.Count());
+                int itemIndex = rnd.Next(0, elements.Count());
+                int item = elements.ElementAt(itemIndex);
                 elements.Remove(item);
                 int itemRow = item / Cols;
                 int itemCol = item % Cols;
@@ -48,10 +49,9 @@ namespace ConwayBusinessLogic
         }
         public void DrawMap()
         {
-            Console.Clear();
-            for (int i = 0; i < Cols - 1; i++)
+            for (int i = 0; i < Cols; i++)
             {
-                for (int j = 0; j < Rows - 1; j++)
+                for (int j = 0; j < Rows; j++)
                 {
                     Console.SetCursorPosition(i, j);
 
@@ -66,41 +66,57 @@ namespace ConwayBusinessLogic
                     Console.Write(' ');
                 }
             }
-            ApplyRules();
             Console.BackgroundColor = ConsoleColor.Black;
         }
 
-        private int getNeighbourCount(int col, int row)
+        private int getNeighbourCount(int c, int r)
         {
-            int result = 0;
-            if (col >= 1 && row >= 1 && Map[col - 1, row - 1]) result++;
-            if (row >= 1 && Map[col, row - 1]) result++;
-            if (col <= Cols - 2 && row >= 1 && Map[col + 1, row - 1]) result++;
-            if (col <= Cols - 2 && Map[col + 1, row]) result++;
-            if (col <= Cols - 2 && row <= Rows - 2 && Map[col + 1, row + 1]) result++;
-            if (row <= Rows - 2 && Map[col, row + 1]) result++;
-            if (col >= 1 && row <= Rows - 2 && Map[col - 1, row + 1]) result++;
-            if (col >= 1 && Map[col - 1, row]) result++;
+            var result = 0;
+            if (c >= 1 && r >= 1 && Map[c - 1, r - 1])
+                result++;
+            if (r >= 1 && Map[c, r - 1])
+                result++;
+            if (c <= Cols - 2 && r >= 1 && Map[c + 1, r - 1])
+                result++;
+            if (c <= Cols - 2 && Map[c + 1, r])
+                result++;
+            if (c <= Cols - 2 && r <= Rows - 2 && Map[c + 1, r + 1])
+                result++;
+            if (r <= Rows - 2 && Map[c, r + 1])
+                result++;
+            if (c >= 1 && r <= Rows - 2 && Map[c - 1, r + 1])
+                result++;
+            if (c >= 1 && Map[c - 1, r])
+                result++;
 
             return result;
         }
         public void ApplyRules()
         {
-            bool[,] tempMap = new bool[Cols, Rows];
-            for (int i = 0; i < Cols - 1; i++)
+            bool[,] tempArea = new bool[Cols, Rows];
+
+            for (int c = 0; c < Cols; c++)
             {
-                for (int j = 0; j < Rows - 1; j++)
+                for (int r = 0; r < Rows; r++)
                 {
-                    var neighbours = getNeighbourCount(i, j);
-                    if (neighbours < 2 || neighbours > 3)
-                        tempMap[i, j] = false;
-                    else if (Map[i, j] && (neighbours == 2 || neighbours == 3))
-                        tempMap[i, j] = true;
-                    else if (!Map[i, j] && neighbours == 3)
-                        tempMap[i, j] = true;
+                    var neighbors = getNeighbourCount(c, r);
+                    if (Map[c, r] && neighbors < 2)
+                        tempArea[c, r] = false;
+                    else if (Map[c, r] && (neighbors == 2 || neighbors == 3))
+                        tempArea[c, r] = true;
+                    else if (Map[c, r] && neighbors > 3)
+                        tempArea[c, r] = false;
+                    else if (Map[c, r] == false && neighbors == 3)
+                        tempArea[c, r] = true;
                 }
             }
-            Map = tempMap;
+
+            Map = tempArea;
+        }
+
+        public bool isAllFalse()
+        {
+            return !Map.Cast<bool>().Contains(true);
         }
     }
 }
