@@ -8,6 +8,7 @@ namespace ConwayBusinessLogic
 {
     public class PlayArea //internal = namespace-en belül látható
     {
+        //ez egy teszt commit
         public int Cols { get; private set; }
         public int Rows { get; private set; }
         public int Cells { get; private set; }
